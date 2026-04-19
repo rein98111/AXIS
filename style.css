@@ -1,0 +1,463 @@
+* {
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    margin: 0; padding: 0;
+    background: #000210;
+    color: #fff;
+    font-family: 'Exo 2', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 掃描線效果 */
+.scanline {
+    width: 100%; height: 100%;
+    position: fixed; top: 0; left: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none; z-index: 20;
+}
+
+/* 音量控制主容器 */
+.volume-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    width: 45px; /* 預設只顯示圖示寬度 */
+    height: 45px;
+}
+
+/* 滑鼠移入時展開 */
+.volume-container:hover {
+    width: 200px; /* 展開後的寬度 */
+    border-color: #00f2ff;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+}
+
+.volume-icon {
+    font-size: 20px;
+    min-width: 25px;
+    text-align: center;
+    cursor: default;
+}
+
+/* 滑條包裝層 */
+.volume-slider-wrapper {
+    margin-left: 15px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    width: 120px;
+}
+
+.volume-container:hover .volume-slider-wrapper {
+    opacity: 1;
+}
+
+/* 自定義滑條樣式 (Neon 風格) */
+#volume-range {
+    -webkit-appearance: none;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    height: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+#volume-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #00f2ff;
+    box-shadow: 0 0 10px #00f2ff;
+    border-radius: 50%;
+}
+
+#start-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 999;
+    display: flex; /* 使用 flex 置中 */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.6s ease, visibility 0.6s;
+    /* 確保這裡絕對沒有 skewX */
+    transform: none !important; 
+}
+
+.start-content {
+    text-align: center;
+    transform: none !important; /* 再次確保內容不歪 */
+}
+
+.join-img {
+    width: 280px;
+    filter: drop-shadow(0 0 20px #00f2ff);
+    /* 這裡不需要反向傾斜了，因為父層已經不歪了 */
+    transform: none; 
+    animation: pulse 2s infinite ease-in-out;
+}
+
+.start-hint {
+    margin-top: 30px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 8px;
+    color: #fff;
+    text-shadow: 0 0 10px #00f2ff;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink { 50% { opacity: 0.3; } }
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.bg-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at center, #00f2ff22 0%, #000210 80%);
+    z-index: -1;
+    transition: background 0.8s ease;
+}
+
+/* 選曲容器整體傾斜 */
+.selection-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    z-index: 10;
+    opacity: 0;
+    transform: skewX(-6deg);
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* 中二感幾何卡片 */
+.song-card {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 50px 100px;
+    border-left: 10px solid #00f2ff;
+    border-right: 10px solid #fff;
+    clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 50px rgba(0, 242, 255, 0.3);
+}
+
+.song-info { text-align: left; }
+
+#song-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 4rem;
+    margin: 0;
+    font-style: italic;
+    letter-spacing: 5px;
+    text-shadow: 5px 5px 0px #ff0080, 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+#song-artist {
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+.difficulty-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: #ff0080;
+    padding: 5px 25px;
+    transform: skewX(15deg);
+    box-shadow: 0 0 20px #ff0080aa;
+}
+
+.diff-label { font-weight: 900; font-size: 0.9rem; }
+#level-num { font-size: 1.8rem; font-weight: 900; font-family: 'Orbitron'; }
+
+/* 封面樣式 */
+.cover-wrapper {
+    width: 280px; height: 280px;
+    border: 5px solid #fff;
+    position: relative;
+    transform: rotate(3deg);
+    box-shadow: 15px 15px 0px #00f2ff;
+}
+
+#cover-art {
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+/* 控制按鈕 */
+.nav-controls {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-btn, .play-btn {
+    background: transparent;
+    border: 3px solid #fff;
+    color: #fff;
+    padding: 15px 40px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    transition: 0.3s;
+}
+
+.play-btn {
+    padding: 15px 100px;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-btn:hover, .play-btn:hover {
+    background: #fff;
+    color: #000;
+    box-shadow: 0 0 30px #fff;
+    transform: scale(1.05);
+}
+
+.hint { color: #555; letter-spacing: 2px; }
+
+/* 閃爍動畫 */
+@keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 官網按鈕容器 */
+.portal-link-container {
+    margin-top: 30px;
+    text-align: center;
+    width: 100%;
+}
+
+/* 官網按鈕樣式 */
+.portal-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(0, 242, 255, 0.6); /* 稍微淡一點的藍色 */
+    text-decoration: none;
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    padding: 8px 20px;
+    letter-spacing: 2px;
+    transition: all 0.3s;
+    background: rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    transform: skewX(-10deg); /* 保持斜角風格 */
+}
+
+.portal-btn:hover {
+    color: #fff;
+    background: rgba(0, 242, 255, 0.2);
+    border-color: #00f2ff;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+    text-shadow: 0 0 5px #00f2ff;
+}
+
+/* 遊戲區域背景與暗度設定 */
+#game-area {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: #000;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* 這裡使用 linear-gradient 來疊加 75% 的黑色背景 (rgba 0.75) */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75));
+}
+
+#gameCanvas {
+    width: 100%; height: 100%;
+    position: relative;
+    z-index: 5;
+}
+
+.game-ui {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    padding: 40px;
+    font-family: 'Orbitron', sans-serif;
+    z-index: 10;
+}
+
+/* 右上角分數與準確率 */
+.top-right {
+    position: absolute;
+    top: 40px; right: 60px;
+    text-align: right;
+    transform: skewX(-10deg);
+}
+
+#score {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 15px #00f2ff;
+}
+
+#accuracy {
+    font-size: 1.2rem;
+    color: #00f2ff;
+}
+
+/* 左下角 Combo 樣式 (94x) */
+.bottom-left {
+    position: absolute;
+    bottom: 60px; left: 60px;
+    transform: skewX(-10deg);
+}
+
+#combo-container {
+    display: flex;
+    align-items: baseline;
+}
+
+#combo-num {
+    font-size: 5rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 4px 4px 0px #ff0080;
+}
+
+.combo-x {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #ff0080;
+    margin-left: 5px;
+}
+
+/* 判定誤差條 */
+.judgment-container {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+}
+.judgment-bar {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+}
+.judge-line.center {
+    position: absolute;
+    left: 50%; top: -5px;
+    width: 2px; height: 14px;
+    background: #fff;
+}
+.hit-indicator {
+    position: absolute;
+    top: -3px; width: 2px; height: 10px;
+    transition: opacity 1s ease-out;
+}
+
+/* 結算畫面 */
+#result-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: radial-gradient(circle at center, #001020 0%, #000 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; font-family: 'Orbitron', sans-serif;
+}
+.result-container {
+    text-align: center; border: 2px solid #00f2ff;
+    padding: 60px 100px; transform: skewX(-6deg);
+    background: rgba(0, 242, 255, 0.05);
+}
+.result-title { font-size: 3rem; text-shadow: 0 0 20px #00f2ff; margin-bottom: 40px; }
+.stat-item { display: flex; justify-content: space-between; width: 350px; margin: 15px auto; border-bottom: 1px solid #333; }
+.stat-item .label { color: #00f2ff; }
+
+/* 暫停選單遮罩 */
+#pause-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+}
+
+.pause-container {
+    text-align: center;
+    transform: skewX(-6deg);
+    border: 2px solid #fff;
+    padding: 40px 80px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.pause-title {
+    font-size: 3rem;
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    text-shadow: 0 0 20px #ff0080;
+    margin-bottom: 30px;
+}
+
+.pause-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* 修改暫停按鈕樣式 */
+.pause-btn {
+    background: transparent;
+    border: 2px solid rgba(0, 242, 255, 0.3); /* 沒選中時淡一點 */
+    color: rgba(255, 255, 255, 0.5);
+    padding: 12px 60px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+/* 當按鈕被選中時的效果 */
+.pause-btn.active {
+    border: 2px solid #00f2ff;
+    color: #fff;
+    background: rgba(0, 242, 255, 0.2);
+    box-shadow: 0 0 20px #00f2ff;
+    transform: scale(1.1);
+}
+
+.pause-btn:hover {
+    background: #00f2ff;
+    color: #000;
+    box-shadow: 0 0 20px #00f2ff;
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>AXIS NEON DRIVE</title>
+    <link rel="stylesheet" href="style.css">
+	<link rel="icon" type="image/png" href="images/join.png">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;900&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="scanline"></div>
+	<div class="volume-container">
+    	<div class="volume-icon">🔊</div>
+    	<div class="volume-slider-wrapper">
+        	<input type="range" id="volume-range" min="0" max="1" step="0.01" value="0.5">
+    	</div>
+	</div>
+    <div class="bg-overlay"></div>
+
+    <div id="start-overlay" onclick="initGame()">
+        <div class="start-content">
+            <img src="images/join.png" alt="AXIS" class="join-img">
+            <p class="start-hint">FREE PLAY / PRESS START</p>
+        </div>
+    </div>
+
+    <div class="selection-container" style="display: none; opacity: 0;">
+        <div class="song-card">
+            <div class="song-info">
+                <h1 id="song-title">AXIS</h1>
+                <p id="song-artist">SYSTEM ERROR</p>
+				<p id="song-creator" style="color: #00f2ff; font-size: 0.9rem; margin-top: -10px; margin-bottom: 15px; font-family: 'Orbitron';"></p>
+                <div class="difficulty-badge">
+                    <span class="diff-label">DIFFICULTY</span>
+                    <span id="level-num">--</span>
+                </div>
+            </div>
+            <div class="cover-section">
+                <div class="cover-wrapper"><div id="cover-art"></div></div>
+            </div>
+        </div>
+        <div class="nav-controls">
+            <button class="nav-btn" onclick="prevSong()">◀ PREV</button>
+            <button class="play-btn" onclick="startGame()">TRACK START</button>
+            <button class="nav-btn" onclick="nextSong()">NEXT ▶</button>
+        </div>
+		
+		<div class="portal-link-container">
+    		<a href="website.html" class="portal-btn">RETURN TO OFFICIAL PORTAL</a>
+		</div>
+    </div>
+
+    <div id="game-area" style="display: none;">
+        <canvas id="gameCanvas"></canvas>
+        <div class="game-ui">
+            <div class="top-right">
+                <div id="score">0000000</div>
+                <div id="accuracy">100.00%</div>
+            </div>
+            <div class="bottom-left">
+                <div id="combo-num">0</div>
+                <div class="combo-label">COMBO</div>
+            </div>
+            <div class="judgment-container">
+                <div class="judgment-bar"><div class="judge-line center"></div></div>
+            </div>
+			<div id="storyboard-text" style="
+            	position: absolute;
+            	top: 65%;
+            	left: 50%;
+            	transform: translateX(-50%);
+            	font-family: 'Orbitron', sans-serif;
+            	color: #00f2ff;
+            	font-size: 1.8rem;
+            	text-align: center;
+            	text-shadow: 0 0 15px #00f2ff;
+            	pointer-events: none;
+            	transition: opacity 0.3s ease;
+            	opacity: 0;">	
+			</div>
+			<div id="pause-screen" style="display: none;">
+    			<div class="pause-container">
+        			<h2 class="pause-title">PAUSED</h2>
+        			<div class="pause-options">
+            			<button class="pause-btn" onclick="resumeGame()">CONTINUE</button>
+            			<button class="pause-btn" onclick="retryGame()">RETRY</button>
+            			<button class="pause-btn" onclick="endGame()">END</button>
+        			</div>
+    			</div>
+			</div>
+        </div>
+    </div>
+
+    <div id="result-screen" style="display: none;">
+        <div class="result-container">
+            <h1 class="result-title">TRACK COMPLETE</h1>
+            <div class="result-stats">
+                <div class="stat-item"><span class="label">SCORE</span><span id="res-score">0</span></div>
+                <div class="stat-item"><span class="label">ACCURACY</span><span id="res-accuracy">0%</span></div>
+                <div class="stat-item"><span class="label">MAX COMBO</span><span id="res-combo">0</span></div>
+            </div>
+            <p class="hint">PRESS [ ENTER ] TO RETURN</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
