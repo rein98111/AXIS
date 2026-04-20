@@ -162,16 +162,21 @@ function gameLoop() {
         return; 
     }
 
+    // --- Storyboard 文字顯示邏輯 (支援動態 endTime 與 2秒預設值) ---
     const msgElem = document.getElementById('storyboard-text');
     if (msgElem) {
         const activeNote = notes.find(n => 
             n.message && 
-            currentTime >= (n.time - 500) && 
-            currentTime <= (n.time + 1500)
+            currentTime >= n.time && 
+            // 優先使用物件自訂的 endTime，若無則預設顯示 2000ms
+            currentTime <= (n.endTime ? n.endTime : n.time + 2000)
         );
 
         if (activeNote) {
-            msgElem.innerText = activeNote.message;
+            // 只有當文字內容不同時才更新 DOM，提升效能
+            if (msgElem.innerText !== activeNote.message) {
+                msgElem.innerText = activeNote.message;
+            }
             msgElem.style.opacity = '1';
         } else {
             msgElem.style.opacity = '0';
