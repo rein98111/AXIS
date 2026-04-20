@@ -228,6 +228,7 @@ function gameLoop() {
         }
     });
     animationId = requestAnimationFrame(gameLoop);
+}
 
 function processJudge(weight) {
     totalJudgeCount++; currentAccScore += weight;
