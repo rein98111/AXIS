@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AXIS 官方網站</title>
-	<link rel="icon" type="image/png" href="images/join.png">
+    <link rel="icon" type="image/png" href="images/join.png">
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;900&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -43,101 +43,140 @@
 
         /* 上方 Logo 區域 */
         .header-section {
-            padding: 40px 0;
+            padding: 30px 0;
             z-index: 10;
         }
 
         .main-logo {
-            width: 400px;
+            width: 350px;
             filter: drop-shadow(0 0 15px var(--neon-blue));
             animation: pulse 2s infinite ease-in-out;
         }
 
         @keyframes pulse {
             0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px var(--neon-blue)); }
-            50% { transform: scale(1.1); filter: drop-shadow(0 0 30px var(--neon-blue)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 30px var(--neon-blue)); }
         }
 
-        /* 下方內容區域：左右分欄 */
+        /* 下方內容區域：三欄分佈 */
         .main-content {
             display: flex;
-            width: 90%;
-            max-width: 1200px;
+            width: 95%;
+            max-width: 1400px;
             flex: 1;
-            gap: 40px;
-            margin-bottom: 50px;
+            gap: 25px;
+            margin-bottom: 40px;
             z-index: 10;
+        }
+
+        /* 共通側邊欄樣式 */
+        .side-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
         }
 
         /* 左側：公告 News */
         .news-side {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.03);
+            flex: 1.8;
             border-left: 5px solid var(--neon-pink);
-            transform: skewX(-4deg);
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            overflow-y: auto;
+            transform: skewX(-3deg);
         }
+        .news-side > * { transform: skewX(3deg); }
 
-        .news-side > * { transform: skewX(4deg); } /* 反向傾斜文字 */
-
-        .section-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            color: var(--neon-pink);
-            margin-top: 0;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
+        .news-side .section-title { color: var(--neon-pink); }
         .news-item {
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding-bottom: 10px;
         }
-
         .news-date { color: #888; font-size: 0.8rem; }
-        .news-text { margin: 5px 0; color: #ccc; }
+        .news-text { margin: 5px 0; color: #ccc; font-size: 0.9rem; line-height: 1.4; }
 
-        /* 右側：動作按鈕 */
+        /* 中間：譜面列表 Track List (滾輪版本) */
+        .track-list-side {
+            flex: 1.2;
+            border-top: 5px solid var(--neon-blue);
+            transform: skewX(-3deg);
+            background: rgba(0, 242, 255, 0.03);
+        }
+        .track-list-side > * { transform: skewX(3deg); }
+        .track-list-side .section-title { color: var(--neon-blue); }
+
+        .track-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* 捲軸美化 */
+        .track-scroll-area::-webkit-scrollbar { width: 4px; }
+        .track-scroll-area::-webkit-scrollbar-thumb { background: var(--neon-blue); }
+
+        .track-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            padding: 12px 18px;
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            transition: 0.3s;
+        }
+        .track-entry:hover {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: var(--neon-blue);
+            transform: translateX(5px);
+        }
+
+        .track-info-main h3 { margin: 0; font-family: 'Orbitron', sans-serif; font-size: 1rem; }
+        .track-info-main p { margin: 3px 0 0 0; font-size: 0.75rem; color: var(--neon-blue); opacity: 0.7; }
+        .track-level { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 900; color: var(--neon-pink); }
+
+        /* 右側：動作按鈕 Action */
         .action-side {
-            width: 400px;
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 30px;
-        }
-
-        .game-title {
-            text-align: center;
-            font-family: 'Orbitron', sans-serif;
-            transform: skewX(-10deg);
+            gap: 25px;
         }
 
         .game-title h2 {
-            font-size: 3rem;
+            font-size: 2.5rem;
+            font-family: 'Orbitron', sans-serif;
             margin: 0;
             font-style: italic;
             text-shadow: 3px 3px 0px var(--neon-pink);
+            text-align: center;
         }
 
         .play-btn {
             width: 100%;
-            padding: 25px;
+            padding: 20px;
             background: transparent;
             border: 2px solid var(--neon-blue);
             color: var(--neon-blue);
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 900;
             cursor: pointer;
             text-decoration: none;
             text-align: center;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
             transform: skewX(-10deg);
         }
 
@@ -145,15 +184,6 @@
             background: var(--neon-blue);
             color: #000;
             box-shadow: 0 0 30px var(--neon-blue);
-        }
-
-        .play-btn::after {
-            content: "SYSTEM READY";
-            position: absolute;
-            bottom: 2px;
-            right: 5px;
-            font-size: 0.6rem;
-            opacity: 0.7;
         }
 
         /* 底部裝飾 */
@@ -165,6 +195,9 @@
             background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
             z-index: 5;
         }
+
+        .loading-text { color: var(--neon-blue); text-align: center; margin-top: 20px; animation: flash 1s infinite; }
+        @keyframes flash { 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
@@ -175,32 +208,95 @@
     </header>
 
     <main class="main-content">
-        <section class="news-side">
+        <section class="side-panel news-side">
             <h2 class="section-title">Latest News</h2>
             <div class="news-content">
+			    <div class="news-item">
+                    <span class="news-date">2026.04.24</span>
+                    <p class="news-text">NEW TRACK: "PADORU / PADORU" has been deployed! BPM 190 challenge is waiting for you.</p>
+					<p class="news-text" style="color: #ff0080; margin-top: 5px;">SYSTEM UPDATE: New result screen layout deployed.</p>
+                </div>
                 <div class="news-item">
                     <span class="news-date">2026.04.19</span>
-                    <p class="news-text">曲目更新！TUTORIAL - City已經完成譜面製作。</p>
-					<p class="news-text">新手教學已上線。</p>
+                    <p class="news-text">SYSTEM UPDATE: Tutorial beatmap is now complete! Ready for basic training?</p>
                 </div>
+                </div>
+        </section>
+
+        <section class="side-panel track-list-side">
+            <h2 class="section-title">Track Database</h2>
+            <div id="track-container" class="track-scroll-area">
+                <div class="loading-text">SYNCING DATABASE...</div>
             </div>
         </section>
 
         <section class="action-side">
             <div class="game-title">
                 <h2>NEON DRIVE</h2>
-                <p style="color: var(--neon-blue); letter-spacing: 5px;">VER 1.0.0</p>
+                <p style="color: var(--neon-blue); letter-spacing: 5px; text-align: center;">VER 1.0.0</p>
             </div>
             
             <a href="index.html" class="play-btn">LAUNCH ENGINE</a>
             
-            <p style="color: #555; font-size: 0.8rem; text-align: center;">
+            <p style="color: #555; font-size: 0.75rem; text-align: center; line-height: 1.6;">
                 RECOMMENDED: HEADPHONES ON<br>
-                IN GAME， PRESS [ENTER] TO START IN GAME
+                PRESS [ENTER] TO START
             </p>
         </section>
     </main>
 
     <div class="footer-decor"></div>
+
+    <script>
+        // 設定你的歌曲資料夾名稱
+        const songFolders = ["tuto", "track1"]; 
+
+        async function loadTrackList() {
+            const container = document.getElementById('track-container');
+            container.innerHTML = ''; // 清除加載中文字
+
+            for (const folder of songFolders) {
+                await new Promise((resolve) => {
+                    const script = document.createElement('script');
+                    // 指向 maps 資料夾下的譜面檔
+                    script.src = `maps/${folder}/map.js`;
+                    
+                    script.onload = () => {
+                        if (window.currentTrack) {
+                            addTrackToUI(window.currentTrack.info);
+                        }
+                        script.remove(); // 讀完就移除，保持網頁乾淨
+                        resolve();
+                    };
+                    
+                    script.onerror = () => {
+                        console.error(`Could not load map: ${folder}`);
+                        resolve(); 
+                    };
+                    
+                    document.body.appendChild(script);
+                });
+            }
+        }
+
+        function addTrackToUI(info) {
+            const container = document.getElementById('track-container');
+            const entry = document.createElement('div');
+            entry.className = 'track-entry';
+            
+            entry.innerHTML = `
+                <div class="track-info-main">
+                    <h3>${info.title}</h3>
+                    <p>${info.artist} // BY: ${info.creator || 'SYSTEM'}</p>
+                </div>
+                <div class="track-level">LV.${info.level}</div>
+            `;
+            
+            container.appendChild(entry);
+        }
+
+        // 網頁加載完畢後執行
+        window.onload = loadTrackList;
+    </script>
 </body>
 </html>
