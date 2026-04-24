@@ -68,5 +68,5 @@ window.currentTrack = {
         { time: 126866, message: "Double Tap!!" },
         { time: 126854, angle: 225 },{ time: 126954, angle: 315 },
         { time: 130369, type: "end" },
-    ]
+    ] 
 };
