@@ -31,7 +31,7 @@
                 <p id="song-artist">SYSTEM ERROR</p>
 				<p id="song-creator" style="color: #00f2ff; font-size: 0.9rem; margin-top: -10px; margin-bottom: 15px; font-family: 'Orbitron';"></p>
                 <div class="difficulty-badge">
-                    <span class="diff-label">DIFFICULTY</span>
+                    <span class="diff-label">LEVEL</span>
                     <span id="level-num">--</span>
                 </div>
             </div>
@@ -94,11 +94,43 @@
     <div id="result-screen" style="display: none;">
         <div class="result-container">
             <h1 class="result-title">TRACK COMPLETE</h1>
-            <div class="result-stats">
-                <div class="stat-item"><span class="label">SCORE</span><span id="res-score">0</span></div>
-                <div class="stat-item"><span class="label">ACCURACY</span><span id="res-accuracy">0%</span></div>
-                <div class="stat-item"><span class="label">MAX COMBO</span><span id="res-combo">0</span></div>
+            
+            <div class="result-main-layout">
+                <div class="result-stats-grid">
+                    <div class="stat-box great">
+                        <span class="label">GREAT</span>
+                        <span id="res-great">0</span>
+                    </div>
+                    <div class="stat-box good">
+                        <span class="label">GOOD</span>
+                        <span id="res-good">0</span>
+                    </div>
+                    <div class="stat-box ok">
+                        <span class="label">OK</span>
+                        <span id="res-ok">0</span>
+                    </div>
+                    <div class="stat-box miss">
+                        <span class="label">MISS</span>
+                        <span id="res-miss">0</span>
+                    </div>
+                </div>
+
+                <div class="result-summary">
+                    <div class="summary-item">
+                        <span class="label">MAX COMBO</span>
+                        <span id="res-combo">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">ACCURACY</span>
+                        <span id="res-accuracy">0.00%</span>
+                    </div>
+                    <div class="summary-item score-highlight">
+                        <span class="label">FINAL SCORE</span>
+                        <span id="res-score">0000000</span>
+                    </div>
+                </div>
             </div>
+
             <p class="hint">PRESS [ ENTER ] TO RETURN</p>
         </div>
     </div>
