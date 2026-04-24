@@ -2,7 +2,7 @@
  * AXIS - Core Game Engine (Hold Note Fixed & Improved)
  * 整合音量控制功能版本
  */
-const songFolders = ["tuto"]; 
+const songFolders = ["tuto", "track1",]; 
 let songList = [], currentIndex = 0;
 let isTransitioning = false, gameStarted = false, isResultScreen = false;
 let isPaused = false, pauseStartTime = 0;
@@ -10,10 +10,13 @@ let pauseIndex = 0;
 
 let previewAudio = new Audio(); previewAudio.loop = true;
 let gameAudio = new Audio();
+let hitSound = new Audio('assets/hitsound.wav'); // 確保路徑與你的音效檔名一致
 
 let score = 0, combo = 0, maxCombo = 0, accuracy = 100.0;
 let notes = [], canvas, ctx, animationId, gameStartTime = 0, endTime = 0;
 let totalJudgeCount = 0, currentAccScore = 0;
+// 在 script.js 開頭加入
+let counts = { great: 0, good: 0, ok: 0, miss: 0 };
 
 // 追蹤目前正在按下的按鍵對應的軌道與音符
 let activeHoldNotes = {}; // { laneIndex: noteObject }
@@ -230,11 +233,32 @@ function gameLoop() {
     animationId = requestAnimationFrame(gameLoop);
 }
 
+// 修改後的判定處理函數
 function processJudge(weight) {
-    totalJudgeCount++; currentAccScore += weight;
+    totalJudgeCount++; 
+    currentAccScore += weight;
+
+    // --- 新增：累加 counts 判定次數 ---
+    if (weight === 100) {
+        counts.great++;
+    } else if (weight === 70) {
+        counts.good++;
+    } else if (weight === 40) {
+        counts.ok++;
+    } else if (weight === 0) {
+        counts.miss++;
+    }
+    // ----------------------------
+
     accuracy = (currentAccScore / (totalJudgeCount * 100)) * 100;
     if (combo > maxCombo) maxCombo = combo;
     updateStatsUI();
+}
+
+function playHitSound() {
+    const sound = hitSound.cloneNode(); // 複製節點，避免聲音重疊時失效
+    sound.volume = hitSound.volume;
+    sound.play();
 }
 
 function updateStatsUI() {
@@ -260,6 +284,7 @@ function checkHit() {
     const hitNote = notes.find(n => n.active && !n.headHit && Math.abs(n.time - currentTime) < 150);
     
     if (hitNote) {
+		playHitSound(); // <--- 在這裡加入觸發
         const diff = currentTime - hitNote.time;
         const absDiff = Math.abs(diff);
         let w = absDiff <= 45 ? 100 : (absDiff <= 90 ? 70 : 40);
@@ -287,6 +312,7 @@ function handleKeyup(e) {
         const absDiff = Math.abs(diff);
 
         if (absDiff < 150) {
+			playHitSound(); // <--- 長條尾部判定成功也加一個音效
             let w = absDiff <= 50 ? 100 : 70;
             score += Math.floor((500000 / notes.length) * (w / 100));
             processJudge(w);
@@ -302,12 +328,41 @@ function handleKeyup(e) {
 }
 
 function showResultScreen() {
-    isResultScreen = true; gameAudio.pause();
+    isResultScreen = true; 
+    gameAudio.pause();
+    
+    // 隱藏遊戲畫面，顯示結算畫面
     document.getElementById('game-area').style.display = 'none';
     document.getElementById('result-screen').style.display = 'flex';
-    document.getElementById('res-score').innerText = score.toString().padStart(7, '0');
-    document.getElementById('res-accuracy').innerText = accuracy.toFixed(2) + "%";
+
+    // --- 填入數據：確保在 resetStats 之前執行 ---
+    // 左側：判定統計 (對應你 HTML 中的 ID)
+    document.getElementById('res-great').innerText = counts.great;
+    document.getElementById('res-good').innerText = counts.good;
+    document.getElementById('res-ok').innerText = counts.ok;
+    document.getElementById('res-miss').innerText = counts.miss;
+    
+    // 右側：主要總結
     document.getElementById('res-combo').innerText = maxCombo;
+    document.getElementById('res-accuracy').innerText = accuracy.toFixed(2) + "%";
+    document.getElementById('res-score').innerText = score.toString().padStart(7, '0');
+
+    // 數據填寫完畢後，可以呼叫 resetStats 來清理變數
+    resetStats();
+}
+
+function resetStats() {
+    score = 0; 
+    combo = 0; 
+    maxCombo = 0; 
+    accuracy = 100.0;
+    totalJudgeCount = 0; 
+    currentAccScore = 0;
+    // 重置判定計數器
+    counts = { great: 0, good: 0, ok: 0, miss: 0 };
+    
+    // 更新遊戲內的 UI，讓下次開始時畫面是乾淨的
+    updateStatsUI();
 }
 
 function returnToSelection() {
@@ -400,11 +455,13 @@ function setupVolumeControl() {
         const initialVol = volumeRange.value;
         previewAudio.volume = initialVol;
         gameAudio.volume = initialVol;
+		hitSound.volume = initialVol;
 
         volumeRange.addEventListener('input', (e) => {
             const val = e.target.value;
             previewAudio.volume = val;
             gameAudio.volume = val;
+			hitSound.volume = val; // <--- 新增這行：拉動時同步音量
             
             if (parseFloat(val) === 0) {
                 volumeIcon.innerText = '🔇';
